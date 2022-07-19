@@ -5,8 +5,101 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JSONParser"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="JSON Parser" MinHeight="450" MinWidth="800" WindowStyle="None">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#FF404145"/>
+            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="BorderBrush" Value="#FF404145"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="#FF404145" BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Button.IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="#FF404145"/>
+                    <Setter Property="Foreground" Value="BurlyWood"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#FF404145"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="BorderBrush" Value="LightGray"/>
+            <Setter Property="FontFamily" Value="Cascadia Mono"/>
+            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" >
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="TreeView">
+            <Setter Property="Background" Value="#FF404145"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="BorderBrush" Value="LightGray"/>
+        </Style>
 
-    </Grid>
+
+    </Window.Resources>
+    <Border BorderThickness="3" BorderBrush="LightGray">
+        <Grid Background ="#FF404145">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="450" Width="45*"/>
+                <ColumnDefinition MinWidth="335" Width="35*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border x:Name="Head" Grid.ColumnSpan="2"  BorderBrush="LightGray" BorderThickness="0,0,0,3"/>
+            <TextBlock Text="   JSON Parser" Grid.ColumnSpan="2" FontSize="14" Foreground="LightGray" Margin="0,0,85,3" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" />
+            <Button x:Name="ExitButton" Grid.Column="2" Content="X"  HorizontalAlignment="Right" Margin="5,0,10,3" Click="ExitButton_Click"/>
+            <Button x:Name="MaximizeButton" Grid.Column="2" Content="▭" FontSize="14" HorizontalAlignment="Right" Margin="5,0,35,3" Click="MaximizeButton_Click" />
+            <Button x:Name="MinimizeButton" Grid.Column="2" Content="—" HorizontalAlignment="Right" Margin="5,0,65,3" Click="MinimizeButton_Click" />
+
+
+
+            <DockPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="50">
+                <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="25">
+                    <Button Content="Save to file" Margin="10,5,0,0"/>
+                    <Button Content="Load from file" HorizontalAlignment="Left" Margin="10,5,0,0"/>
+                </DockPanel>
+                <DockPanel DockPanel.Dock="Bottom" Height="25" HorizontalAlignment="Stretch">
+                    <Button Content="Select all" Margin="10,5,0,0"/>
+                    <Button Content="Copy"  Margin="8,5,0,0"/>
+                    <Button Content="Paste" Margin="8,5,0,0"/>
+                    <Button Content="Format" Margin="8,5,0,0"/>
+                    <Button Content="HidhLight" Margin="8,5,0,0"/>
+                    <Button Content="Remove white spaces" Margin="8,5,0,0"/>
+                    <Button Content="Clear" Margin="8,5,5,0" HorizontalAlignment="Left"/>
+                </DockPanel>
+            </DockPanel>
+
+            <Button Content="View Tree" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Bottom" />
+
+            <TextBox x:Name="TextEnter"  Grid.Row="2" Grid.Column="0" 
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                 Margin="10,0,10,10" 
+                 AcceptsReturn="True" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+            <TreeView  Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,10,10"/>
+        </Grid>
+    </Border>
+
 </Window>
