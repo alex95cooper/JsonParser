@@ -85,7 +85,7 @@
                     <Button x:Name="PasteButton" Content="Paste" Margin="8,5,0,0" Click="PasteButton_Click"/>
                     <Button x:Name="FormatButton" Content="Format" Margin="8,5,0,0"/>
                     <Button x:Name="HighLightButton" Content="HidhLight" Margin="8,5,0,0"/>
-                    <Button x:Name="RwsButton" Content="Remove white spaces" Margin="8,5,0,0"/>
+                    <Button x:Name="RwsButton" Content="Remove white spaces" Margin="8,5,0,0" Click="RwsButton_Click"/>
                     <Button x:Name="ClearButton" Content="Clear" Margin="8,5,5,0" HorizontalAlignment="Left" Click="ClearButton_Click"/>
                 </DockPanel>
             </DockPanel>

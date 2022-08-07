@@ -60,5 +60,11 @@ namespace JSONParser
         {
             TextBar.Clear();
         }
+
+        private void RwsButton_Click(object sender, RoutedEventArgs e)
+        {
+            string inputText = TextBar.Text;
+            TextBar.Text = Lexer.RemoveWhiteSpaces(inputText);
+        }
     }
 }
