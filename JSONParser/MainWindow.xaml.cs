@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace JSONParser
@@ -58,13 +61,31 @@ namespace JSONParser
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
-            TextBar.Clear();
+            TextBar.Document.Blocks.Clear();
         }
 
         private void RwsButton_Click(object sender, RoutedEventArgs e)
         {
-            string inputText = TextBar.Text;
-            TextBar.Text = Lexer.RemoveWhiteSpaces(inputText);
+
+        }
+
+        private void FormatButton_Click(object sender, RoutedEventArgs e)
+        {
+            string text = new TextRange(TextBar.Document.ContentStart, TextBar.Document.ContentEnd).Text.Replace(Environment.NewLine, " ");
+            Lexer lexer = new(text);
+            List<Lexem> lexems = lexer.MoveNext();
+            Formatter formatter = new(lexems);
+            if (formatter.CheckIfTokenListValid())
+            {
+                string jsonString = formatter.GetJsonString();
+                TextBar.SetText(jsonString);
+            }
+            else
+            {
+                MessageBox.Show("Error");
+            }
+
+            TextBar.Ap
         }
     }
 }

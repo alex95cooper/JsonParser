@@ -30,7 +30,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="TextBox">
+        <Style TargetType="RichTextBox">
             <Setter Property="Background" Value="#FF404145"/>
             <Setter Property="BorderThickness" Value="3"/>
             <Setter Property="BorderBrush" Value="LightGray"/>
@@ -39,7 +39,7 @@
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
+                    <ControlTemplate TargetType="RichTextBox">
                         <Border  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" >
                             <ScrollViewer x:Name="PART_ContentHost"/>
                         </Border>
@@ -83,7 +83,7 @@
                     <Button x:Name="SelectAllButton" Content="Select all" Margin="10,5,0,0" Click="SelectAllButton_Click"/>
                     <Button x:Name="CopyButton" Content="Copy" Margin="8,5,0,0" Click="CopyButton_Click"/>
                     <Button x:Name="PasteButton" Content="Paste" Margin="8,5,0,0" Click="PasteButton_Click"/>
-                    <Button x:Name="FormatButton" Content="Format" Margin="8,5,0,0"/>
+                    <Button x:Name="FormatButton" Content="Format" Margin="8,5,0,0" Click="FormatButton_Click"/>
                     <Button x:Name="HighLightButton" Content="HidhLight" Margin="8,5,0,0"/>
                     <Button x:Name="RwsButton" Content="Remove white spaces" Margin="8,5,0,0" Click="RwsButton_Click"/>
                     <Button x:Name="ClearButton" Content="Clear" Margin="8,5,5,0" HorizontalAlignment="Left" Click="ClearButton_Click"/>
@@ -92,7 +92,7 @@
 
             <Button Content="View Tree" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Bottom" />
 
-            <TextBox x:Name="TextBar" Grid.Row="2" Grid.Column="0" 
+            <RichTextBox x:Name="TextBar" Grid.Row="2" Grid.Column="0" 
                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                  Margin="10,0,10,10" 
                  AcceptsReturn="True" 

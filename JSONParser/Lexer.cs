@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace JSONParser
 {
     internal class Lexer
     {
+        private readonly string _input;
+
         public List<Lexem> _lexems;
-        private string _input;
         private int _counter;
 
         public Lexer(string input)
@@ -22,8 +24,8 @@ namespace JSONParser
                 return null;
             }
 
-            while (_counter < _input.Length) 
-            {                
+            while (_counter < _input.Length)
+            {
                 if (_input[_counter] == ' ')
                 {
                     _counter++;
@@ -55,7 +57,7 @@ namespace JSONParser
                 {
                     return null;
                 }
-            } 
+            }
 
             if (_lexems.Contains(null))
             {
@@ -73,7 +75,7 @@ namespace JSONParser
             }
             else if (_input[_counter] == '}')
             {
-                return ((int)Tokens.CloseObjectBrace, "} ");
+                return ((int)Tokens.CloseObjectBrace, "}");
             }
             else if (_input[_counter] == '[')
             {
@@ -81,7 +83,7 @@ namespace JSONParser
             }
             else if (_input[_counter] == ']')
             {
-                return ((int)Tokens.CloseArrayBrace, "] ");
+                return ((int)Tokens.CloseArrayBrace, "]");
             }
             else if (_input[_counter] == ':')
             {
@@ -108,11 +110,11 @@ namespace JSONParser
                 {
                     if (_input[_counter] == ':')
                     {
-                        return ((int)Tokens.Key, interimList.ToString());
+                        return ((int)Tokens.Key, new string(interimList.ToArray()));
                     }
                     else if (_input[_counter] == ',' || _input[_counter] == '}' || _input[_counter] == ']')
                     {
-                        return ((int)Tokens.String, interimList.ToString());
+                        return ((int)Tokens.String, new string(interimList.ToArray()));
                     }
                     else
                     {
@@ -158,12 +160,12 @@ namespace JSONParser
         private (int, string) GetIntOrDouble()
         {
             List<char> interimList = GetAnyWordOrNumber();
-            string interimString = interimList.ToString();
+            string interimString = new(interimList.ToArray());
             if (int.TryParse(interimString, out _))
             {
                 return ((int)Tokens.Int, interimString);
             }
-            else if (double.TryParse(interimString, out _))
+            else if (double.TryParse(interimString, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
             {
                 return ((int)Tokens.Double, interimString);
             }
@@ -176,13 +178,14 @@ namespace JSONParser
         private (int, string) GetBoolOrNull()
         {
             List<char> interimList = GetAnyWordOrNumber();
-            string interimString = interimList.ToString();
-            if (interimString == "true" || interimString == "false" ||
-                interimString == "null")
+            string interimString = new(interimList.ToArray());
+            if (interimString == "true" || interimString == "true " ||
+                interimString == "false" || interimString == "false " ||
+                interimString == "null" || interimString == "null ")
             {
                 return ((int)Tokens.BoolOrNull, interimString);
             }
-            else  
+            else
             {
                 return ((int)Tokens.NotValidToken, null);
             }
@@ -193,12 +196,12 @@ namespace JSONParser
             List<char> interimList = new();
             while (_counter < _input.Length)
             {
-                if (_input[_counter] != ' ')
+                if (_input[_counter] == ' ' || _input[_counter] == ']' || _input[_counter] == '}')
                 {
-                    interimList.Add(_input[_counter]);
+                    interimList.Add(' ');
                     return interimList;
                 }
-                else if (_input[_counter] != ',')
+                else if (_input[_counter] == ',')
                 {
                     return interimList;
                 }
