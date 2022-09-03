@@ -17,8 +17,7 @@ namespace JSONParser
         Comma,
         Key,
         String,
-        Int,
-        Double,
+        IntOrDouble,
         BoolOrNull
     }
 }

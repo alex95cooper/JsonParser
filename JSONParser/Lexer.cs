@@ -26,17 +26,13 @@ namespace JSONParser
 
             while (_counter < _input.Length)
             {
-                if (_input[_counter] == ' ')
-                {
-                    _counter++;
-                }
-                else if (_input[_counter] == '{' || _input[_counter] == '}' ||
+
+                if (_input[_counter] == '{' || _input[_counter] == '}' ||
                     _input[_counter] == '[' || _input[_counter] == ']' ||
                     _input[_counter] == ':' || _input[_counter] == ',')
                 {
                     (int token, string symbol) = GetAnySymbol();
                     _lexems.Add(new Lexem(token, symbol));
-                    _counter++;
                 }
                 else if (_input[_counter] == '"')
                 {
@@ -69,29 +65,38 @@ namespace JSONParser
 
         private (int, string) GetAnySymbol()
         {
-            if (_input[_counter] == '{')
+            char symbol = _input[_counter];
+            List<char> interimList = new();
+            interimList.Add(symbol);
+            _counter++;
+            if (_input[_counter] == ' ' || _input[_counter] == '\r')
             {
-                return ((int)Tokens.OpenObjectBrace, "{ ");
+                interimList = AddWhiteSpacesOrNewNine(interimList);
             }
-            else if (_input[_counter] == '}')
+
+            if (symbol == '{')
             {
-                return ((int)Tokens.CloseObjectBrace, "}");
+                return ((int)Tokens.OpenObjectBrace, new string(interimList.ToArray()));
             }
-            else if (_input[_counter] == '[')
+            else if (symbol == '}')
             {
-                return ((int)Tokens.OpenArrayBrace, "[ ");
+                return ((int)Tokens.CloseObjectBrace, new string(interimList.ToArray()));
             }
-            else if (_input[_counter] == ']')
+            else if (symbol == '[')
             {
-                return ((int)Tokens.CloseArrayBrace, "]");
+                return ((int)Tokens.OpenArrayBrace, new string(interimList.ToArray()));
             }
-            else if (_input[_counter] == ':')
+            else if (symbol == ']')
             {
-                return ((int)Tokens.Colon, ": ");
+                return ((int)Tokens.CloseArrayBrace, new string(interimList.ToArray()));
+            }
+            else if (symbol == ':')
+            {
+                return ((int)Tokens.Colon, new string(interimList.ToArray()));
             }
             else
             {
-                return ((int)Tokens.Comma, ", ");
+                return ((int)Tokens.Comma, new string(interimList.ToArray()));
             }
         }
 
@@ -105,21 +110,21 @@ namespace JSONParser
 
             while (_counter < _input.Length)
             {
-                _counter++;
-                if (_input[_counter] != ' ')
+                if (_input[_counter] == ' ')
                 {
-                    if (_input[_counter] == ':')
-                    {
-                        return ((int)Tokens.Key, new string(interimList.ToArray()));
-                    }
-                    else if (_input[_counter] == ',' || _input[_counter] == '}' || _input[_counter] == ']')
-                    {
-                        return ((int)Tokens.String, new string(interimList.ToArray()));
-                    }
-                    else
-                    {
-                        return ((int)Tokens.NotValidToken, null);
-                    }
+                    interimList = AddWhiteSpacesOrNewNine(interimList);
+                }
+                else if (_input[_counter] == ':')
+                {
+                    return ((int)Tokens.Key, new string(interimList.ToArray()));
+                }
+                else if (_input[_counter] == ',' || _input[_counter] == '}' || _input[_counter] == ']')
+                {
+                    return ((int)Tokens.String, new string(interimList.ToArray()));
+                }
+                else
+                {
+                    return ((int)Tokens.NotValidToken, null);
                 }
             }
 
@@ -150,6 +155,8 @@ namespace JSONParser
                 }
                 else if (_input[_counter] == '"')
                 {
+                    _counter++;
+                    interimList = AddWhiteSpacesOrNewNine(interimList);
                     return interimList;
                 }
             }
@@ -161,13 +168,12 @@ namespace JSONParser
         {
             List<char> interimList = GetAnyWordOrNumber();
             string interimString = new(interimList.ToArray());
-            if (int.TryParse(interimString, out _))
+            if (int.TryParse(interimString, out _) ||
+                double.TryParse(interimString, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
             {
-                return ((int)Tokens.Int, interimString);
-            }
-            else if (double.TryParse(interimString, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
-            {
-                return ((int)Tokens.Double, interimString);
+                interimList = AddWhiteSpacesOrNewNine(interimList);
+                interimString = new(interimList.ToArray());
+                return ((int)Tokens.IntOrDouble, interimString);
             }
             else
             {
@@ -179,10 +185,10 @@ namespace JSONParser
         {
             List<char> interimList = GetAnyWordOrNumber();
             string interimString = new(interimList.ToArray());
-            if (interimString == "true" || interimString == "true " ||
-                interimString == "false" || interimString == "false " ||
-                interimString == "null" || interimString == "null ")
+            if (interimString == "true" || interimString == "false" || interimString == "null")
             {
+                interimList = AddWhiteSpacesOrNewNine(interimList);
+                interimString = new(interimList.ToArray());
                 return ((int)Tokens.BoolOrNull, interimString);
             }
             else
@@ -196,12 +202,8 @@ namespace JSONParser
             List<char> interimList = new();
             while (_counter < _input.Length)
             {
-                if (_input[_counter] == ' ' || _input[_counter] == ']' || _input[_counter] == '}')
-                {
-                    interimList.Add(' ');
-                    return interimList;
-                }
-                else if (_input[_counter] == ',')
+                if (_input[_counter] == ' ' || _input[_counter] == ',' ||
+                    _input[_counter] == ']' || _input[_counter] == '}')
                 {
                     return interimList;
                 }
@@ -211,6 +213,24 @@ namespace JSONParser
             }
 
             return interimList;
+        }
+
+        private List<char> AddWhiteSpacesOrNewNine(List<char> token)
+        {
+            while (_counter < _input.Length)
+            {
+                if (_input[_counter] == ' ' || _input[_counter] == '\r' || _input[_counter] == '\n')
+                {
+                    token.Add(_input[_counter]);
+                    _counter++;
+                }
+                else
+                {
+                    return token;
+                }
+            }
+
+            return token;
         }
     }
 }
