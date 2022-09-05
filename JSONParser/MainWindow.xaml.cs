@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -49,6 +51,7 @@ namespace JSONParser
 
         private void SelectAllButton_Click(object sender, RoutedEventArgs e)
         {
+            RichTextBar.Focus();
             RichTextBar.SelectAll();
         }
 
@@ -87,6 +90,33 @@ namespace JSONParser
             ProcessEnteredText(sender);
         }
 
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new() { Filter = "JsonFiles|*.json|All Files|*.*" };
+            if (dialog.ShowDialog() == true)
+            {
+                string extension = Path.GetExtension(dialog.FileName);
+                if (extension == ".txt" || extension == ".json")
+                {
+                    RichTextBar.SetText(File.ReadAllText(dialog.FileName));
+                }
+                else
+                {
+                    MessageBox.Show("Selected format is not supported");
+                }
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+           
+            SaveFileDialog dialog = new() { Filter = "JsonFiles|*.json|TextFiles|*.txt" };
+            if (dialog.ShowDialog() == true)
+            {
+                File.WriteAllText(dialog.FileName, RichTextBar.GetText());
+            }
+        }
+
         private void ProcessEnteredText(object sender)
         {
             string text = (sender == HighLightButton) ? RichTextBar.GetText() : RichTextBar.GetText().Replace(Environment.NewLine, " ");
@@ -112,7 +142,7 @@ namespace JSONParser
             }
             else if (sender == FormatButton || sender == RwsButton)
             {
-                MessageBox.Show("Error");
+                MessageBox.Show("Entered text not valid");
             }
         }
 
@@ -127,7 +157,7 @@ namespace JSONParser
                 TreeViewBar.Items.Add(objectBrace);
                 _counter++;
                 if (_counter < lexems.Count - 1)
-                {                    
+                {
                     AddObjectToTreeView(lexems, objectBrace);
                 }
             }
@@ -241,7 +271,7 @@ namespace JSONParser
             }
             else if (lexem.Key == (int)Tokens.BoolOrNull)
             {
-                rangeOfTokenList.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Blue);
+                rangeOfTokenList.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.DodgerBlue);
             }
             else
             {
