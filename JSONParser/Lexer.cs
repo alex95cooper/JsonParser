@@ -144,7 +144,6 @@ namespace JSONParser
                 {
                     if (_input[_counter + 1] == '\\' || _input[_counter + 1] == '"')
                     {
-                        interimList.Add(_input[_counter]);
                         interimList.Add(_input[_counter + 1]);
                         _counter++;
                     }
